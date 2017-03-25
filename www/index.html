@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/menu.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+    <!--For users deploying their apps to Windows 8.1 or Android Gingerbread, platformOverrided.js
+    will inject platform-specific code from the /merges folder -->
+    <script src="lib/platformOverrides.js"></script>
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- handleOpenURL handles the url being sent to the app -->
+    <script type="text/javascript">
+        var handleOpenURL = function(url) {
+            setTimeout(function() {
+                window.localStorage.setItem('received-url', url);
+            }, 0);
+        }
+    </script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+
+    <!-- Api Client -->
+    <script src="js/ApiClient/ApiClient.js"></script>
+
+    <!-- Controllers -->
+    <script src="js/Controllers/MainController.js"></script>
+
+    <!-- Helpers -->
+    <script src="js/Helpers/TorrentHelper.js"></script>
+</head>
+<body ng-app="transmission" ng-controller="MainController">
+    <ion-pane>
+        <ion-header-bar class="bar-stable">
+            <h1 class="title">Transmission - Torrents</h1>
+            <button ng-click="menu.show($event)" ng-hide="selectionMode" class="button button-icon icon ion-navicon"></button>
+        </ion-header-bar>
+        <ion-content>
+            <div ng-hide="torrents.length" class="no-torrents">
+                <p>No torrents found.</p>
+                <p ng-show="!apiUrl.length">You must set an API url in the settings.</p>
+            </div>
+            <div ng-show="torrents.length">
+                <ion-list ng-class="{'selection-mode': selectionMode}">
+                    <ion-item ng-repeat="torrent in torrents" on-hold="enableSelectionMode($index)" on-tap="selectTorrent($index)">
+                        <div class="torrent-left" ng-show="selectionMode">
+                            <ion-checkbox ng-model="torrent.selected"></ion-checkbox>
+                        </div>
+                        <div ng-class="{'torrent-right': selectionMode}">
+                            <div class="torrent-name item-text-wrap" ng-class="{'verifying': torrent.status == 1 || torrent.status == 2, 'downloading': torrent.status > 2, 'paused': torrent.status == 0}">{{ torrent.name }}</div>
+                            <div ng-hide="torrent.status == 1 || torrent.status == 2" ng-hide="selectionMode" class="progress-bar {{ TorrentHelper.getProgressClass(torrent.percentDone) }}" style="width: {{ torrent.percentDone }}%;">
+                                <span class="progress-bar-percentage" ng-hide="{{ torrent.percentDone < 10 }}">{{ torrent.percentDone }}%</span>
+                            </div>
+                            <span ng-show="torrent.status == 1 || torrent.status == 2">Verifying</span>
+                            <span ng-show="selectionMode" class="progress-text">{{ torrent.percentDone }}%</span>
+                            <div ng-hide="selectionMode" class="torrent-details">
+                                <span class="download-speed">Download: {{ TorrentHelper.bytesToReadableSpeed(torrent.downloadRate) }}</span>
+                                <span class="upload-speed">Upload: {{ TorrentHelper.bytesToReadableSpeed(torrent.uploadRate) }}</span>
+                            </div>
+                            <div ng-hide="selectionMode" class="torrent-details">
+                                <span class="downloaded">Downloaded: {{ TorrentHelper.bytesToReadableSize(torrent.downloadedEver) }} / {{ TorrentHelper.bytesToReadableSize(torrent.size) }}</span>
+                                <span class="uploaded">Uploaded: {{ TorrentHelper.bytesToReadableSize(torrent.uploadedEver) }}</span>
+                            </div>
+                            <div ng-hide="selectionMode" class="torrent-details">
+                                <span class="eta">ETA: {{ TorrentHelper.getReadableEta(torrent.eta) }}</span>
+                            </div>
+                            <div ng-hide="selectionMode" class="torrent-buttons">
+                                <div class="button-bar">
+                                    <button class="button button-clear ion-play button-balanced" on-tap="startTorrents([$index]);"></button>
+                                    <button class="button button-clear ion-pause button-energized" on-tap="stopTorrents([$index]);"></button>
+                                    <button class="button button-clear ion-loop button-positive" on-tap="verifyTorrents([$index]);"></button>
+                                    <button class="button button-clear ion-trash-b button-assertive" on-tap="deleteTorrents([$index]);"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </ion-item>
+                </ion-list>
+            </div>
+            <div ng-show="selectionMode" class="bar-stable bar-footer">
+                <div class="button-bar">
+                    <button class="button button-clear ion-play button-balanced" on-tap="startTorrents(getSelectedTorrents());"></button>
+                    <button class="button button-clear ion-pause button-energized" on-tap="stopTorrents(getSelectedTorrents());"></button>
+                    <button class="button button-clear ion-loop button-positive" on-tap="verifyTorrents(getSelectedTorrents());"></button>
+                    <button class="button button-clear ion-trash-b button-assertive" on-tap="deleteTorrents(getSelectedTorrents());"></button>
+                </div>
+            </div>
+        </ion-content>
+    </ion-pane>
+</body>
+</html>

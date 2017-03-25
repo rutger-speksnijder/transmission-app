@@ -1,0 +1,83 @@
+﻿div.no-torrents {
+    text-align: center;
+    margin-top: 10px;
+    color: #ef473a;
+}
+
+div.torrent-name.downloading {
+    color: #33cd5f;
+}
+
+div.torrent-name.paused {
+    color: #ffc900;
+}
+
+div.torrent-name.verifying {
+    color: #387ef5;
+}
+
+div.torrent-details {
+    margin-top: 5px;
+    font-size: 11px;
+}
+
+div.torrent-details span {
+    margin-right: 5px;
+}
+
+div.progress-bar {
+    border-radius: 100px;
+    height: 20px;
+    text-align: center;
+    vertical-align: middle;
+    margin-top: 5px;
+}
+
+div.progress-bar span.progress-bar-percentage {
+    text-align: center;
+    color: white !important;
+}
+
+div.progress-bar.hide-text span.progress-bar-percentage {
+    display: none;
+}
+
+div.progress-bar.assertive {
+    background-color: #ef473a;
+}
+
+div.progress-bar.energized {
+    background-color: #ffc900;
+}
+
+div.progress-bar.balanced {
+    background-color: #33cd5f;
+}
+
+div.progress-bar.positive {
+    background-color: #387ef5;
+}
+
+div.torrent-left {
+    float: left;
+}
+
+div.torrent-right {
+    float: right;
+}
+
+ion-list.selection-mode div.torrent-left {
+    width: 25%;
+}
+
+ion-list.selection-mode div.torrent-right {
+    width: 70%;
+}
+
+div.torrent-left label.item-checkbox {
+    border: none !important;
+}
+
+span.progress-text {
+    font-size: 11px;
+}
